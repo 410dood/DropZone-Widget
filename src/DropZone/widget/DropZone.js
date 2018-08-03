@@ -35,11 +35,10 @@ define([
     "dojo/_base/event",
 
     "DropZone/lib/jquery-1.11.2",
-    "dojo/text!DropZone/widget/template/DropZone.html"
+    "dojo/text!DropZone/widget/template/DropZone.html",
 ], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
-    "use strict";
 
-    var $ = _jQuery.noConflict(true);
+    //const $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
     return declare("DropZone.widget.DropZone", [ _WidgetBase, _TemplatedMixin ], {
@@ -57,8 +56,8 @@ define([
         onDropMf: "",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
-          _contextObj: null,
-          status: "",
+        _contextObj: null,
+        status: "",
 
 
         /********************
@@ -92,7 +91,7 @@ define([
         },
 
         _updateRendering: function() {
-          this.runMf();
+            this.runMf();
         },
 
         _execMf: function (mf, guid, cb) {
@@ -101,36 +100,36 @@ define([
                 mx.ui.action(mf, {
                     params: {
                         applyto: "selection",
-                        guids: [guid]
+                        guids: [guid],
                     },
                     callback: lang.hitch(this, function (obj) {
-                        if (cb && typeof cb === "function") {
-                            cb(objs);
+                        if (cb && "function" === typeof cb) {
+                            cb(obj);
                         }
 
-                        var divNum = this.class;
+                        const divNum = this.class;
 
-                        var htmlElements = "";
-                        for (var i = 0; i < obj.length; i++) {
-                          var project = obj[i];
-                          var projectGuid = project.jsonData.guid;
-                          var image = "/file?guid=" + projectGuid + "&csrfToken=" + mx.session.getCSRFToken();
-                          var hasImage = project.jsonData.attributes.Name.value
-                          var header = project.jsonData.attributes.Header.value;
-                          var subHeader = project.jsonData.attributes.SubHeader.value;
-                          var description = project.jsonData.attributes.Description.value;
-                          var id = "'div" + divNum + [i] + "'";
+                        let htmlElements = "";
+                        for (let i = 0; i < obj.length; i++) {
+                            const project = obj[ i ];
+                            const projectGuid = project.jsonData.guid;
+                            const image = "/file?guid=" + projectGuid + "&csrfToken=" + mx.session.getCSRFToken();
+                            const hasImage = project.jsonData.attributes.Name.value;
+                            const header = project.jsonData.attributes.Header.value;
+                            const subHeader = project.jsonData.attributes.SubHeader.value;
+                            const description = project.jsonData.attributes.Description.value;
+                            const id = "'div" + divNum + [i] + "'";
 
-                          var imageDiv = hasImage != "" ? "<div><img src='" + image + "' class = 'image'></div>" : "";
-                          var headerDiv = "<div class = 'header'>" + header + "</div>";
-                          var subHeaderDiv = "<div class = 'subHeader'>" + subHeader + "</div>";
-                          var descriptionDiv = "<div class = 'description'>" + description + "</div>";
+                            const imageDiv = "" !== hasImage ? "<div><img src='" + image + "' class = 'image'></div>" : "";
+                            const headerDiv = "<div class = 'header'>" + header + "</div>";
+                            const subHeaderDiv = "<div class = 'subHeader'>" + subHeader + "</div>";
+                            const descriptionDiv = "<div class = 'description'>" + description + "</div>";
 
-                           htmlElements += "<div id=" + projectGuid + " class='project' draggable='true'>" + imageDiv + headerDiv + subHeaderDiv + descriptionDiv + "</div>";
+                            htmlElements += "<div id=" + projectGuid + " class='project' draggable='true'>" + imageDiv + headerDiv + subHeaderDiv + descriptionDiv + "</div>";
 
 
 
-                        };
+                        }
 
 
                         dojoHtml.set(this.projectNode, htmlElements);
@@ -138,7 +137,7 @@ define([
                     }),
                     error: function (error) {
                         console.debug(error.description);
-                    }
+                    },
                 }, this);
             }
         },
@@ -149,14 +148,14 @@ define([
                 mx.ui.action(mf, {
                     params: {
                         applyto: "selection",
-                        guids: [guid]
+                        guids: [guid],
                     },
                     callback: lang.hitch(this, function (obj) {
-                        if (cb && typeof cb === "function") {
-                            cb(objs);
+                        if (cb && "function" === typeof cb) {
+                            cb(obj);
                         }
 
-                        var mxObject = obj[0];
+                        const mxObject = obj[ 0 ];
 
                         mxObject.set("Status", this.status);
 
@@ -168,13 +167,13 @@ define([
                             },
                             error: function(error){
                                 console.log("Could not commit the obj with error: " + error);
-                            }
+                            },
                         });
 
                     }),
                     error: function (error) {
                         console.debug(error.description);
-                    }
+                    },
                 }, this);
             }
         },
@@ -185,10 +184,10 @@ define([
 
         //Trigger Microflow
         runMf: function(){
-          //Trigger Data Scource Microflow if it's available
-          if (this.dataSourceMf !== "") {
-              this._execMf(this.dataSourceMf, this._contextObj.getGuid());
-          }
+            //Trigger Data Scource Microflow if it's available
+            if ("" !== this.dataSourceMf) {
+                this._execMf(this.dataSourceMf, this._contextObj.getGuid());
+            }
         },
 
 
@@ -200,28 +199,28 @@ define([
 
         //Drag and Drop Functions
         allowDrop: function(ev) {
-          ev.preventDefault();
+            ev.preventDefault();
         },
 
         drag: function(ev) {
-          ev.dataTransfer.setData("id", ev.target.id);
+            ev.dataTransfer.setData("id", ev.target.id);
         },
 
         drop: function(ev) {
             ev.preventDefault();
-            var data = ev.dataTransfer.getData("id");
+            const data = ev.dataTransfer.getData("id");
             ev.target.appendChild(document.getElementById(data));
 
-            var guid = ev.dataTransfer.getData("guid");
-            var newStatus = this.phaseTitle;
+            const guid = ev.dataTransfer.getData("guid");
+            const newStatus = this.phaseTitle;
 
-            var underscoreNewStatus = newStatus.split(' ').join('_');
+            const underscoreNewStatus = newStatus.split(' ').join('_');
 
             this.status = underscoreNewStatus;
 
             //Trigger Data Scource Microflow if it's available
             this._execOnDropMf(this.onDropMf, data);
-        }
+        },
 
 
     });
